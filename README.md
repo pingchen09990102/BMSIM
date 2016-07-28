@@ -1,5 +1,5 @@
 # BMSIM
-BioNano data simulator
+BioNano molecule simulator
 ================
 
 scripts to simulate BioNano molecule data
@@ -36,16 +36,16 @@ USAGE
     
 perl BMSIM.pl [options]
 
- Documentation options:
+Documentation options:
  	-help	brief help message
 	-man	full documentation
- 
+
 Required options:
 	-cov	Coverage
 	-ca	reference genome fasta
 	-bnx	bnx output
 	-fragile	fragile site file
- 
+
 Optional options:
 
 	-lm	length_mean,#possion
