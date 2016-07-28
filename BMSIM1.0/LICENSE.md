@@ -1,6 +1,6 @@
 The MIT License (MIT)
 
-Copyright (c) {{{2016}}} {{{BMSIM}}}
+Copyright (c) 2016 BMSIM
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this BMSIM and associated documentation files (the "BMSIM"), to deal
