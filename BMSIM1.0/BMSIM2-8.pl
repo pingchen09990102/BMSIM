@@ -2,35 +2,33 @@
 use strict;
 use warnings;
 use List::Util qw/sum/;
-#use Bio::DB::Fasta####½¨Á¢faË÷Òý
-use Math::Random qw(:all);#Á´½ÓËùÓÐËæ»úÊýÄ£¿é
+use Math::Random qw(:all);
 use Math::Random::MT qw(srand rand);
 use Getopt::Long;
 use Pod::Usage;
-#ÕÒ×ÔÐ´Ä£¿é
 use FindBin qw($Bin);
 use lib "$Bin/lib";
-#×ÔÐ´Ä£¿é
 use Chimera;
-use ErrorMOD;
-use Digest;#²»Í¬Ã¸ÇÐÓÃ²»Í¬Ä£¿é
+use ErrorFN;
+use ErrorFP;
+use ErrorStretch;
+use Digest;
 use RES;
 use Fragile;
 
-#####################################
-#example£º
+#########################################################################################################################################################################################################################
+#exampleï¼š                                
 #
 #	
-#  nohup perl ../BMSIM2-5.pl -cov 10 -p PLsimCov350 -ca /home/bionano/BMSIM/MG1655.fa -bnx /home/bionano/BMSIM/PLsim/PLsimCov350.bnx -fragile /home/bionano/BMSIM/PLsim/MG1655.txt -e GCTCTTC,GAAGAGC -np1 7 >log.txt &
+# perl BMSIM2-5.pl -cov 10 -p PLsimCov350 -ca MG1655.fa -bnx PLsimCov350.bnx -fragile MG1655.txt -e GCTCTTC,GAAGAGC -np1 7 >log.txt
 #
 #
-########################################
+##########################################################################################################################################################################################################################
 
 
-my $start_time=time();#¼ÇÂ¼¿ªÊ¼Ê±¼ä
+my $start_time=time();
 
 my ($out1,$out2,$Cov,$chr_fa,$bnx,$FragileIN,$str,$RtI,$RtII,$snr,$Ints,$out3,$out4,$out5,$out6,$out7,$e,$np1,$np2,$FragileArg);
-
 my $man = 0;
 my $help = 0;
 my $version = 0;
@@ -70,8 +68,8 @@ GetOptions (
 			  'Chi_Qua|Chi_Qua:f' => \$Chi_Qua,
 
 			  'e|enzymes_pattern:s' => \$e,#enzyme recognized pattern split with comma
-			  'np1|nick_position1:i' => \$np1,#5' to 3', nicking position of the enzyme patternËùÈ±¼î»ùÓëµÚÒ»¸ö¼î»ù¼ä¾à¼î»ùÊý
-			  'np2|nick_position2:i' => \$np2,#nicking position of the enzyme patternËùÈ±¼î»ùÓëµÚÒ»¸ö¼î»ù¼ä¾à¼î»ùÊý
+			  'np1|nick_position1:i' => \$np1,#5' to 3', nicking position of the enzyme pattern
+			  'np2|nick_position2:i' => \$np2,#nicking position of the enzyme pattern
 
               'p|proj:s' => \$ProName,
 
@@ -88,7 +86,9 @@ if ($version)
 }
 #if no new argument input(split with comma), keep the argument default
 my ($m_str,$sd_str,$under1000,$under1500,$ResMean,$ResSdt,$QX11av,$QX11sd,$QX12av,$QX12sd,$enzyme_len,$plus1,$minus1,$plus2,$minus2,$FragilePa,$FragilePb);
-my @Str_arguments=(0.98,0.08);#stretch default arguments
+
+#default stretch  arguments
+my @Str_arguments=(0.98,0.08);
 if ($str)
 {
     @Str_arguments = split(/,/,$str);
@@ -100,8 +100,9 @@ else
 	$m_str=$Str_arguments[0];
 	$sd_str=$Str_arguments[1];
 }
-#'RtI|Res_typeI:s' => \$RtI,#type I, under1000,under1500
-my @RtI_arguments=(0,0.9);#resolution type I default arguments
+
+#default Resolution model type I
+my @RtI_arguments=(0,0.9);
 if ($RtI)
 {
     @RtI_arguments = split(/,/,$RtI);
@@ -113,8 +114,9 @@ else
 	$under1000=$RtI_arguments[0];
 	$under1500=$RtI_arguments[1];
 }
-#'RtII|Res_typeII:s' => \$RtII,#type II, resolution~N(ave,std)
-my @RtII_arguments=(1.2,0.9);#resolution type II default arguments
+
+#default Resolution model type II:resolution~N(ave,std)
+my @RtII_arguments=(1.2,0.9);
 if ($RtII)
 {
     @RtII_arguments = split(/,/,$RtII);
@@ -126,8 +128,9 @@ else
 	$ResMean=$RtII_arguments[0];
 	$ResSdt=$RtII_arguments[1];
 }
-#'snr|SNR:s' => \$snr,#type II, SNR~N(ave,std)
-my @snr_arguments=(3,0.66);#snr default arguments
+
+#default SNR
+my @snr_arguments=(3,0.66);
 if ($snr)
 {
     @snr_arguments = split(/,/,$snr);
@@ -139,8 +142,9 @@ else
 	$QX11av=$snr_arguments[0];
 	$QX11sd=$snr_arguments[1];
 }
-#'Ints|Intensity:s' => \$Ints,#type II, Intensity~N(ave,std)
-my @Ints_arguments=(1,0.2);#intensity default arguments
+
+#default intensity
+my @Ints_arguments=(1,0.2);
 if ($Ints)
 {
     @Ints_arguments = split(/,/,$Ints);
@@ -153,11 +157,8 @@ else
 	$QX12sd=$Ints_arguments[1];
 }
 
-#'e|enzymes_pattern:s' => \$enzymes,
-my @e_arguments=("GCTCTTC","GAAGAGC");#e default arguments
-
-#my @enzymes=split(/,/,$e);
-#my $enzyme_len=@enzymes;
+#default enzymes_pattern
+my @e_arguments=("GCTCTTC","GAAGAGC");
 if ($e)#single 
 {
     @e_arguments = split(/,/,$e);
@@ -165,10 +166,8 @@ if ($e)#single
 	print "$enzyme_len\n";
 	if ($enzyme_len==2) #single
 		{
-			#die "Option -np1 or --nick_position1 must be specified with new enzyme.\n" unless $np1; # report missing required variables
 			$plus1=$e_arguments[0];
 			$minus1=$e_arguments[1];
-			#$nickpos1=$np1;
 		}
 	else #dual
 		{
@@ -188,8 +187,9 @@ else #default single
 	$enzyme_len=2;
 }
 print "$plus1\t$minus1\t$np1\n";
-#'f|FragileArg:s' => \$FragileArg
-my @f_arguments=(0.7758,-0.006984);#Fragile default arguments a,b
+
+#default FragileArg a and b
+my @f_arguments=(0.7758,-0.006984);
 if ($FragileArg)
 {
     @f_arguments = split(/,/,$FragileArg);
@@ -202,24 +202,13 @@ else
 	$FragilePb=$f_arguments[1];
 }
 
-#¼ì²â±ØÐëÊäÈëµÄ²ÎÊýÊÇ·ñÒÑ¾­ÊäÈë
+#check the input files
 die "Option -ca or --assembly_dir not specified.\n" unless $chr_fa; # report missing required variables
 die "Option -bnx or --proj not specified.\n" unless $bnx; # report missing required variables
-#print "$FragileIN\n";
 die "Option -fragile or --genome not specified.\n" unless $FragileIN; # report missing required variables
 die "Option -cov or --ref not specified.\n" unless $Cov; # report missing required variables
 
-
-#ÇÐ¸î»ùÒò×éÈ¾É«ÌåÒ»ÌõÌõµ¥¶ÀÇÐ¸î
-#open (OUT1, ">$out1")or die "can't open $out1 !";#Êä³öÇÐ¸îºóµÄfaÎÄ¼þ
-#open (OUT2, ">$out2")or die "can't open $out2 !";#Êä³öÇÐ¸îºóµÄfa³¤¶ÈÎÄ¼þ
-#open (CMAP, ">$out3")or die "can't open $out3 !";#Êä³öÇÐ¸îºóµÄfa³¤¶ÈÎÄ¼þ
-#open (FN, ">$out4")or die "can't open $out4 !";#Êä³öÇÐ¸îºóµÄfa³¤¶ÈÎÄ¼þ
-#open (FP, ">$out5")or die "can't open $out5 !";#Êä³öÇÐ¸îºóµÄfa³¤¶ÈÎÄ¼þ
-#open (STRETCH, ">$out6")or die "can't open $out6 !";#Êä³öÇÐ¸îºóµÄfa³¤¶ÈÎÄ¼þ
-#open (Chi, ">$out7")or die "can't open $out7 !";#Êä³öÇÐ¸îºóµÄfa³¤¶ÈÎÄ¼þ
-
-####´´½¨BNXÎÄ¼þ######
+####BNX file######
 open (BNX, ">$bnx")or die "can't open $bnx !";
 
 ###add output bnx file head###
@@ -242,10 +231,8 @@ print BNX "#2h	int	float\n";
 print BNX "#Qh	QualityScoreID	QualityScores[N]\n";																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																					
 print BNX "#Qf	str	float\n";
 
+srand(time|$$);
 
-srand(time|$$);#²úÉúËæ»úµã
-
-####ÊäÈë³¤¶È·Ö²¼²ÎÊý£¬¸öÊý£¬¾ùÖµ£¬·½²î
 my $Mol_ID=0;
 my $MoleculeID;
 my @Che_pos=();
@@ -253,32 +240,24 @@ my @ids=();
 my @BNXprint=();
 my @pos_str=();
 
-#ÏÈÔËÐÐFragileSite.plµÃµ½Ò×Ëéµãtxt£¬È»ºó¶ÁÈ¡¸ÃÎÄ¼þÊý¾Ý´æÈëÊý×é
-
 open (IN1, "<$FragileIN")or die "can't open $FragileIN !";
 my @FragileIN = <IN1>;
 my @FragileINdata=();
 shift @FragileIN;#delate head
-
-#pop @FragileIN;#delate end line
 foreach my $FragileINdata(@FragileIN) 
 	{
 		chomp $FragileINdata;
 	}
 close IN1;
 
-
-##Ñ¡ÔñºÎÖÖÃ¸ÇÐÀàÐÍ
-
 my @PosData=();
 my @DistanceData=();
-#my @Orientation=();
 my @genomePre=();
 print "enzyme_len total=$enzyme_len\n";
-for (my $r=0;$r<$Cov;$r++) #¸ù¾ÝcovÑ­»·
+for (my $r=0;$r<$Cov;$r++) #cycle according to coverage
 {
 
-	#¶ÁÈë³õÊ¼»ùÒò×éfaÎÄ¼þ
+	#input genome .fa
 	open (GenomeFa,"< $chr_fa") or die "Can't open file:$!";
 	@genomePre = <GenomeFa>;
 	foreach my $s (@genomePre) 
@@ -287,116 +266,70 @@ for (my $r=0;$r<$Cov;$r++) #¸ù¾ÝcovÑ­»·
 	}
 	close GenomeFa;
 
-
-	#ÏÈÅÐ¶ÏÓÐ¼¸ÌõÈ¾É«Ìå£¬È»ºóÑ­»·¼¸´Î
-	my @ChrSet=grep {$genomePre[$_]=~/^>.+/} 0..$#genomePre;#×¥È¡fa±íÍ·ÐÐ×ø±ê
-	#print "@ChrSet\n";
-	#my @Size1000_pre=grep{$label_size[$_]<=1000} 0..$#label_size;#½«Ð¡ÓÚ1kµÄ¼ä¾àÏÂ±ê´æÈëÊý×é
-
-	my $ChrNum=@ChrSet;#Í³¼ÆÈ¾É«ÌåÌõÊý
-	#print "ChrNum=$ChrNum\n";
+	#cheak the number of chr and cycle with the counted number
+	my @ChrSet=grep {$genomePre[$_]=~/^>.+/} 0..$#genomePre;
+	my $ChrNum=@ChrSet;#count the chromosome
 	my $chr_len=0;
 	my @XChr=();
 	for (my $v=1;$v<$ChrNum+1;$v++) 
+	{
+		my $chrStr=$ChrSet[$v-1]+1;#start from the next line of chr headline
+		my $chrEnd;
+		if ($v==$ChrNum) 
 		{
-			my $chrStr=$ChrSet[$v-1]+1;#È¾É«Ìå±íÍ·ÏÂÒ»ÐÐ¿ªÊ¼
-			#print "chrStr=$chrStr\n";
-			my $chrEnd;
-			if ($v==$ChrNum) 
-				{
-					$chrEnd=@genomePre-1;#×îºóÒ»¸öÔªËØ
-					#print "chrEnd=$chrEnd\n";
-				}
-			else
-				{
-					$chrEnd=$ChrSet[$v]-1;#ÏÂÒ»¸öÈ¾É«Ìå±íÍ·ÉÏÒ»ÐÐ½áÊø
-					#print "chrEnd=$chrEnd\n";
-				}
-			my @ChrGrep=@genomePre[eval($chrStr)..eval($chrEnd)];#½ØÈ¡È¾É«ÌåËùÓÐÆ¬¶Î
-			my $chrPre = join("",@ChrGrep);#´æ´¢È¾É«Ìå
-			$chr_len=length ($chrPre);
-			#print "chr_len=$chr_len\n";
-			my @chrfragile=grep {$_=~/^$v\t.+/} @FragileIN;#×¥È¡ÏàÓ¦È¾É«ÌåµÄÒ×ËéµãÇøÓò
-			my $ppp=@chrfragile;
-			#print "ppp=$ppp\n";
-			@PosData=();
-			@DistanceData=();
-			#@Orientation=();
-			foreach my $chrfragile(@chrfragile) 
-			{
-				my @ChrFragileSet=split(/\t/,$chrfragile);
-				#$chr_len=$ChrFragileSet[1];
-				push (@PosData,$ChrFragileSet[5]);
-				#print "5=$ChrFragileSet[5]\n";
-				push (@DistanceData,$ChrFragileSet[6]);
-				#print "6=$ChrFragileSet[6]\n";
-				#push (@Orientation,$ChrFragileSet[7]);
-				#print "7=$ChrFragileSet[7]\n";
-			}
-
-			###Ëæ»úÔö¼ÓÒ×Ëéµã###
-			#my ($a,$b,$PosSet,$DistanceSet) = @_; #Ö¸Êý·Ö²¼Á½¸ö²ÎÊý,FragileSiteÎ»ÖÃ£¬¼ä¾à
-			#my @FragileSites=Fragile::FragileSite($FragileMean1,$FragileSdt1,$FragileMean2,$FragileSdt2,\@PosData,\@DistanceData,\@Orientation);#·Ö±æÂÊ¾ùÖµºÍ·½²î,FragileSiteÎ»ÖÃ£¬¼ä¾à,·½Ïò£¬·µ»ØÒ×ËéÎ»µãÊý×é
-			my @FragileSites=Fragile::FragileSite($FragilePa,$FragilePb,\@PosData,\@DistanceData);#·Ö±æÂÊ¾ùÖµºÍ·½²î,FragileSiteÎ»ÖÃ£¬¼ä¾à,·½Ïò£¬·µ»ØÒ×ËéÎ»µãÊý×é
-
-			#print FN "@FragileSites\n";
-			#Ôö¼Ó½áÎ²µã¼´È¾É«Ìå×Ü³¤
-			#my $FragileSitesEnd=$chr_len+1;
-	#		push (@FragileSites,$FragileSitesEnd);
-	
-			#print FN "@FragileSites\n";
-			##¸ù¾ÝÒ×Ëéµã½ØÈ¡»ùÒò×éÆ¬¶Î
-			my $FraStart=0;
-			my $FraEnd=1;
-			my $FraLen=0;
-			my $FraStr=0;
-			my @Chr=();
-			foreach my $FraSite (@FragileSites) 
-			{
-				#print "FraSite=$FraSite \n";
-				$FraLen=$FraSite-$FraEnd;
-				#print "$FraStart, $FraLen\n";
-				$FraStr=substr ($chrPre, $FraStart, $FraLen);#ÇÐ¸î
-				push (@Chr,$FraStr);
-				my $e_pat_Len=length($plus1);#enzyme pattern length
-				print "e_pat_Len=$e_pat_Len\n";
-				$FraStart=$FraSite+$e_pat_Len-1;#ÏÂÒ»¸ö½ØÈ¡Æðµã
-				$FraEnd=$FraSite+$e_pat_Len;
-			}
-			#Ôö¼Ó½áÎ²¶Î
-			$FraStr=substr ($chrPre, $FraStart);#ÇÐ¸î
-			push (@Chr,$FraStr);
-
-			my $Chrl=@Chr;
-			#print "Chrl=$Chrl\n";
-			my $XChr = join("X",@Chr);#Á¬½ÓÆ¬¶Î³ÉÈ¾É«Ìå
-			#my $Chrll=length $XChr;
-			#print "Chrll=$Chrll\n";
-			push (@XChr,$XChr);#°Ñ´øÓÐÒ×Ëéµã±ê¼ÇµÄÈ¾É«ÌåÆ¬¶Î´æÈëÊý×é
+			$chrEnd=@genomePre-1;
+		}
+		else
+		{
+			$chrEnd=$ChrSet[$v]-1;
+		}
+		my @ChrGrep=@genomePre[eval($chrStr)..eval($chrEnd)];
+		my $chrPre = join("",@ChrGrep);
+		$chr_len=length ($chrPre);
+		my @chrfragile=grep {$_=~/^$v\t.+/} @FragileIN;
+		my $ppp=@chrfragile;
+		@PosData=();
+		@DistanceData=();
+		foreach my $chrfragile(@chrfragile) 
+		{
+			my @ChrFragileSet=split(/\t/,$chrfragile);
+			push (@PosData,$ChrFragileSet[5]);
+			push (@DistanceData,$ChrFragileSet[6]);
 		}
 
+		#add fragile sites
+		my @FragileSites=Fragile::FragileSite($FragilePa,$FragilePb,\@PosData,\@DistanceData);
 
+		my $FraStart=0;
+		my $FraEnd=1;
+		my $FraLen=0;
+		my $FraStr=0;
+		my @Chr=();
+		foreach my $FraSite (@FragileSites) 
+		{
+			$FraLen=$FraSite-$FraEnd;
+			$FraStr=substr ($chrPre, $FraStart, $FraLen);
+			push (@Chr,$FraStr);
+			my $e_pat_Len=length($plus1);#enzyme pattern length
+			print "e_pat_Len=$e_pat_Len\n";
+			$FraStart=$FraSite+$e_pat_Len-1;
+			$FraEnd=$FraSite+$e_pat_Len;
+		}
+		$FraStr=substr ($chrPre, $FraStart);
+		push (@Chr,$FraStr);
+		my $Chrl=@Chr;
+		my $XChr = join("X",@Chr);#join fragment produced by fragile sites with X to form the chr
+		push (@XChr,$XChr);#Deposited the chr with fragile sites marked with X
+	}
 
-	#ÓÃXÁ¬½Ó¼ÓÁËÒ×ËéµãÇøÓòµÄÈ¾É«Ìå
-	my $genome = join("X",@XChr);#Á¬½Ó´øÓÐÒ×Ëéµã±ê¼ÇµÄÈ¾É«Ìå³ÊÐÂµÄ»ùÒò×éÐòÁÐ£¬È¾É«Ìå¼äÓÃXÁ¬½Ó
-	#my $lll=length $genome;
-	#print "lll=$lll\n";
-
+	my $genome = join("X",@XChr);#join the chr with fragile sites marked with X, and also the different chr with X
 	
-	#Ëæ»úÊýÖÖ×ÓÉè¶¨
 	my $phase=rand(10);
 	random_set_seed_from_phrase($phase);
 
-	####²úÉú³¤¶ÈkbËæ»úÊý
-
-
-	####ÊäÈë³¤¶È·Ö²¼²ÎÊý£¬¸öÊý£¬¾ùÖµ£¬·½²î£¬²úÉú³¤¶ÈËæ»úÊý
-	
-	#ÇÐ¸î»ùÒò×é
 	my $str;
 	my $dataset_length=0;
 	my $rand;
-	#my $X_ID;
 	my $geno_len=length($genome);
 	my $Mol_l=0;
 	my @Fa=();
@@ -404,88 +337,62 @@ for (my $r=0;$r<$Cov;$r++) #¸ù¾ÝcovÑ­»·
 	
 	while ($geno_len!=0) 
 	{
-		#$dataset_length=@MolLenUp100;
-		#$rand=int(rand($dataset_length));#²úÉúÒ»¸öËæ»úÊý
-		#my $read_length01=int($MolLenUp100[$rand]*1000);#kbÒª³ËÒÔ1000×ª»¯Îªbp
-		my $read_length01_random=random_exponential(1,$EXPav);#²úÉúÒ»¸ö·ûºÏÖ¸Êý·Ö²¼µÄ·Ö×Ó³¤¶È
-		my $read_length01=int($read_length01_random*1000);#kbÒª³ËÒÔ1000×ª»¯Îªbp
-		$str=substr ($genome, 0, $read_length01);#´ÓÍ·¿ªÊ¼ÇÐ¸î
-		#ÅÐ¶ÏÊÇ·ñÒÑÇÐ¸îµ½½Ó½üÄ©Î²
-		if ($geno_len<=$read_length01) #ÒÑ½Ó½üÄ©Î²
-			{
-				if ($genome=~m/X/) #°ÑÊ£ÏÂµÄ»ùÒò×éÐòÁÐÊä³ö
-				{
-					my @reads=split(/X/,$genome); 
-					foreach $reads (@reads) 
-					{
-						#print OUT1">Molecule\n";
-						#print OUT1 "$reads\n";
-						$Mol_l=length($reads);
-						#print OUT2 "$Mol_l\n";
-						push (@Fa,$reads);
-					}
-				}
-				else 
-				{
-					#print OUT1 ">Molecule\n";
-					#print OUT1 "$genome\n";
-					$Mol_l=length($genome);
-					#print OUT2 "$Mol_l\n";
-					push (@Fa,$genome);
-				}
-				$geno_len=0;#ÇÐ¸îÍê±Ï
-			}
-		else #ÉÐÎ´µ½´ïÄ©Î²
+		my $read_length01_random=random_exponential(1,$EXPav);#Produce a molecular length accordint to the exponential distribution
+		my $read_length01=int($read_length01_random*1000);#kb transfer to bp
+		$str=substr ($genome, 0, $read_length01);
+
+		#check whether it is closing to the end
+		if ($geno_len<=$read_length01) #approaching to the end
 		{
-			if ($str!~m/X/)#²»º¬ÓÐX£¬¼´ÔÚÍ¬Ò»ÌõÈ¾É«ÌåÉÏ£¬ÇÒ²»º¬Ò×ËéÎ»µã
+			if ($genome=~m/X/) 
 			{
-				substr($genome, 0, $read_length01)="";#É¾³ýÈ¡³öµÄreads
-				#print OUT1 ">Molecule\n";
-				#print OUT1 "$str\n";
+				my @reads=split(/X/,$genome); 
+				foreach $reads (@reads) 
+				{
+					$Mol_l=length($reads);
+					push (@Fa,$reads);
+				}
+			}
+			else 
+			{
+				$Mol_l=length($genome);
+				push (@Fa,$genome);
+			}
+			$geno_len=0;#done with cutting
+		}
+		else #not the end
+		{
+			if ($str!~m/X/)#no X, i.e.in the same chr. and exclude fragile sites
+			{
+				substr($genome, 0, $read_length01)="";#delate the output reads
 				$Mol_l=length($str);
-				#print OUT2 "$Mol_l\n";
-				#print OUT2 ">Molecule\n";
 				push (@Fa,$str);
 			}
-			if ($str=~m/X/ && $str!~m/^X/)#º¬ÓÐX£¬µ«²»ÒÔX¿ªÍ· £¬±íÊ¾¿ÉÄÜ²»ÔÚÍ¬Ò»È¾É«Ìå»òº¬ÓÐÒ×Ëéµã
+			if ($str=~m/X/ && $str!~m/^X/)#with X, but not with X in head, indicating not in the same chr. or contain fragile sites
 			{
-				#$X_ID=index($str,"X");#²éÕÒXµÄÎ»ÖÃ
-				#$str=substr($genome, 0, $X_ID);#È¡³ö¿ªÊ¼µ½Ç°ÃæX´¦µÄreads
-				#substr($genome, 0, $X_ID+1)="";#É¾³ýÈ¡³öµÄreads,+1±íÊ¾°üÀ¨ºóÃæµÄX
-				#$Mol_l=length($str);
-				#push (@Fa,$str);
-
-				substr($genome, 0, $read_length01)="";#É¾³ýÈ¡³öµÄreads
-				#½«È¡³öµÄÐòÁÐÔÚX´¦¶ÏÁÑ:1¡¢Ò×ËéµãÔì³ÉµÄ¶ÏÁÑ£»2¡¢²»Í¬È¾É«ÌåÐòÁÐ¼ä¶ÏÁÑ
+				substr($genome, 0, $read_length01)="";#delate the output reads
+				#break in X: 1) for the breakage of fragile sites; 2) for different chr.
 				my @strSplit=split(/X/,$str); 
-					foreach my $strSplit (@strSplit) 
-					{
-						#print OUT1">Molecule\n";
-						#print OUT1 "$reads\n";
-						$Mol_l=length($strSplit);
-						#print OUT2 "$Mol_l\n";
-						push (@Fa,$strSplit);
-					}
+				foreach my $strSplit (@strSplit) 
+				{
+					$Mol_l=length($strSplit);
+					push (@Fa,$strSplit);
+				}
 			}
-			if ($str=~m/^X/) #º¬ÓÐX£¬ÇÒÒÔX¿ªÍ· 
+			if ($str=~m/^X/) #with X in head 
 			{
-				substr($str, 1, 1)="";#È¥µôµÚÒ»¸öX
-				substr($genome, 0, $read_length01)="";#É¾³ýÈ¡³öµÄreads
-				#print OUT1 ">Molecule\n";
-				#print OUT1 "$str\n";
+				substr($str, 1, 1)="";
+				substr($genome, 0, $read_length01)="";
 				$Mol_l=length($str);
-				#print OUT2 "$Mol_l\n";
 				push (@Fa,$str);
 			}
 			$geno_len=length($genome);
 		}
 	}
-	#print "geno_len=$geno_len\n";
-	##Ò»´Î»ùÒò×éÇÐ¸îÍê±Ï
+	#done with cutting for one 
 
-
-	##ÓÃÃ¸½â
-	my $fasta_length=@Fa;#¼ÆËãËùÓÐ·Ö×Ó×ÜÊý
+	#enzyme digest
+	my $fasta_length=@Fa;
 	my @CMAPdataset=();
 	my $CMAP;
 	my $CmapID=1;
@@ -498,18 +405,16 @@ for (my $r=0;$r<$Cov;$r++) #¸ù¾ÝcovÑ­»·
 	{
 		$string=$Fa[$t];
 		chomp $string;
-		$string=uc($string);#°ÑËùÓÐ×ÖÄ¸×ª»»³É´óÐ´
-		$str_length=length ($string);#ÒÔbpÎªµ¥Î»
+		$string=uc($string);
+		$str_length=length ($string);
 		@sort_Pos=();
 		@Pos_all=();
 		$Numsites=0;
-		#print "$enzymes[0]\t$enzymes[1]\n";
 		if ($enzyme_len==2) #single
 		{
 			@Pos_all=Digest::Single($plus1,$minus1,$np1,$string);
-			#@Pos_all=Digest::Single($enzymes1,$enzymes2,$string);
 		}
-		else#dual
+		else #dual enzymes digest
 		{
 			@Pos_all=Digest::Dual($plus1,$minus1,$np1,$plus2,$minus2,$np2,$string);
 		}
@@ -520,103 +425,83 @@ for (my $r=0;$r<$Cov;$r++) #¸ù¾ÝcovÑ­»·
 		}
 		if ($Pos_length>0) 
 		{
-			@sort_Pos=(sort {$a<=>$b} @Pos_all);#¶ÔÃ¸ÇÐÎ»µã½øÐÐÅÅÐò
-			#print "@sort_Pos\n"; 
+			@sort_Pos=(sort {$a<=>$b} @Pos_all);#To sort by enzyme loci
 			$Numsites=@sort_Pos;
 			my $siteid=0;
 			for (my $z=0;$z<=$Numsites;$z++) 
 			{
 				if ($z==$Numsites) 
 				{
-				$siteid=$z+1;
-				$CMAP=join "\t",$CmapID,$str_length,$Numsites,$siteid,0,$str_length,0,1,1;
-				#print CMAP "a=$CMAP\n";
-				push (@CMAPdataset,$CMAP);
+					$siteid=$z+1;
+					$CMAP=join "\t",$CmapID,$str_length,$Numsites,$siteid,0,$str_length,0,1,1;
+					push (@CMAPdataset,$CMAP);
 				}
 				else
 				{
-				$siteid=$z+1;
-				$CMAP=join "\t",$CmapID,$str_length,$Numsites,$siteid,1,$sort_Pos[$z],0,1,1;
-				#print CMAP "b=$CMAP\n";
-				push (@CMAPdataset,$CMAP);
+					$siteid=$z+1;
+					$CMAP=join "\t",$CmapID,$str_length,$Numsites,$siteid,1,$sort_Pos[$z],0,1,1;
+					push (@CMAPdataset,$CMAP);
 				}
 			}
 		}
 		$CmapID++;
 	}	
-	#print "CmapID=$CmapID\n";
-	##############ÏÈ²úÉúÐèÒªÇ¶ºÏµÄ·Ö×ÓID
+
+	#To produce the needed chimeric molecule ID first
 	my @chemericaID=();
-	my $mol_Num=$CmapID-1;#ÓÐÃ¸ÇÐÎ»µãµÄ·Ö×Ó×ÜÊý
-	my $cycle=int($mol_Num*$Chi_perc);#Ò»´ÎÑ­»·ÇÐ¸î²úÉúµÄ·Ö×ÓÊý*Ç¶ºÏ·Ö×Ó±ÈÀý
+	my $mol_Num=$CmapID-1;
+	my $cycle=int($mol_Num*$Chi_perc);
 	print "$mol_Num\t$cycle\n";
-	#my $cycle=int($fasta_length*$Chi_perc);#Ò»´ÎÑ­»·ÇÐ¸î²úÉúµÄ·Ö×ÓÊý*Ç¶ºÏ·Ö×Ó±ÈÀý
 	my %sns;
 	my $chemericaID=0;
 	my $minimum=1;
 	for (my $q=0;$q<$cycle;$q++) 
 		{
-			#do
-			#	{
-			#		$chemericaID=int(rand($mol_Num))+$minimum;
-			#	}while($sns{$chemericaID} == 1);#·ÀÖ¹ÖØ¸´
-		
-			#ÏÈ²úÉúÒ»¸öËæ»úÊý
 			$chemericaID=int(rand($mol_Num))+$minimum;
-			while(defined $sns{$chemericaID})#Èç¹ûÓÐ¶¨ÒåÁË£¬Ôò±íÊ¾ÖØ¸´ÁË£¬ÐèÖØÐÂ²úÉúËæ»úÊý
+			while(defined $sns{$chemericaID})
 				{
 					$chemericaID=int(rand($mol_Num))+$minimum;
 				}
 			$sns{$chemericaID} = 1;
 			push (@chemericaID,$chemericaID);
 		}
-	#############ÏÈ²úÉúÐèÒªÇ¶ºÏµÄ·Ö×ÓID
 
 
-	##############¼ÓÈë´íÎóÄ£ÐÍ#######################
-	for (my $id=1;$id<$CmapID;$id++) #Ç°ÃæµÄ$CmapID´óÓÚ×Ü·Ö×ÓID
+####################Add error models#######################
+	for (my $id=1;$id<$CmapID;$id++)
 	{
-		
 		my @mol=();
 		my @mol_1=();
 		my @mol_pre=();
 		my @pos_str=();
 		my @SitePos=();
-
 		@mol_pre=grep /^$id\t\d+\t\d+\t\d+\t\d+\t\d+\t\d+\t\d+\t\d+$/, @CMAPdataset;
-
 		foreach my $molecule (@mol_pre) 
 		{
 			my @data_03=split(/\t/,$molecule);
 			push (@SitePos,$data_03[5]);
 		}
 
-
-		#¼ÓÈëFNÎ»µã
-		@mol=ErrorMOD::FN ($p_FN,\@SitePos);
+		#add FNs
+		@mol=ErrorFN::FN ($p_FN,\@SitePos);
 		
-		#¼ÓÈëFPÎ»µã
-		@mol_1=ErrorMOD::FP ($lamdaFP,\@mol);#·µ»ØµÄÊÇcmapÊý×é
-
+		#add FPs
+		@mol_1=ErrorFP::FP ($lamdaFP,\@mol);
 		
-		###ÌôÑ¡ÐèÒªÇ¶ºÏµÄ·Ö×Ó£¬¼ÓÈëÇ¶ºÏÄ£ÐÍ#####
+		#add chimera
 		if (grep {$_==$id} @chemericaID) 
 			{
-				my $Che_pos=join ("t",@mol_1);#×¢Òâ¸ù¾ÝÇ°ÃæµÄÊý×éÃû³ÆÐÞ¸Ä
+				my $Che_pos=join ("t",@mol_1);
 				push (@Che_pos,$Che_pos);
 				$Mol_ID++;
 				push (@ids,$Mol_ID);
-				next;#Ìø¹ýÏÂÊö²½Öè£¬¼ì²âÏÂÒ»Ìõ·Ö×Ó
+				next;
 			}
-		###ÌôÑ¡ÐèÒªÇ¶ºÏµÄ·Ö×Ó£¬¼ÓÈëÇ¶ºÏÄ£ÐÍ#####
 
+		#add stretch model
+		@pos_str=ErrorStretch::Stretch ($m_str,$sd_str,\@mol_1);
 
-		#·Ö×ÓÀ­Éì
-		@pos_str=ErrorMOD::Stretch ($m_str,$sd_str,\@mol_1);#·µ»ØµÄÊÇÎ»ÖÃÊý×é
-
-		#########·Ö±æÂÊ£º±£Áô10%µÄ1kbÒÔÏÂµÄÃ¸ÇÐÎ»µã£¬80%µÄ1kb-1.5kbµÄÎ»µã£¬ÆäËû1500bpÒÔÏÂµÄÎ»µãÎ»ÖÃÈ¡¾ùÖµ£¨Ïà¼Ó/2£©
-		#my @RE=Chimera::RES($Mol_ID,$QX11av,$QX11sd,$QX12av,$QX12sd,$under1000,$under1500,\@pos_str);
-		#¸ù¾ÝRESÀàÐÍµ÷ÓÃºÏÊÊµÄRESº¯Êý
+		#add resolution models,there is two options
 		my @RES=();
 		if ($res==1) 
 			{
@@ -629,134 +514,112 @@ for (my $r=0;$r<$Cov;$r++) #¸ù¾ÝcovÑ­»·
 
 		@BNXprint=&PRINT($Mol_ID,$QX11av,$QX11sd,$QX12av,$QX12sd,\@RES);
 		$Mol_ID=$BNXprint[1];
-
 		print BNX "$BNXprint[0]\n";
+	}
+####################Add error models#######################
 
-	}#¶ÔÓ¦¼ÓÈë´íÎóÄ£ÐÍµÄforÑ­»·
+}
 
-
-}#¶ÔÓ¦covµÄ
-
-	#µÃµ½ËùÓÐÐèÒªµÄÇ¶ºÏµÄ·Ö×Óºó½øÐÐÇ¶ºÏ	
-	#´¦ÀíÇ¶ºÏ·Ö×Ó,´«Èë$Mol_ID
+	#get all the molecules that need to be chimera
 	my $isd_len=@ids;
 	my $Che_pos_len=@Che_pos;
-
 	my @Che=Chimera::Che($res,$under1000,$under1500,$Chi_Bi,$Chi_Tri,$Chi_Qua,\@ids,\@Che_pos);
-
 	foreach my $Che (@Che) 
 		{
 			my @Che_dataSet=split(/\t/,$Che);
-
-		####·Ö×ÓÀ­Éì
-		@pos_str=ErrorMOD::Stretch ($m_str,$sd_str,\@Che_dataSet);#·µ»ØµÄÊÇÎ»ÖÃÊý×é
+			#add stretch model 
+			@pos_str=ErrorStretch::Stretch ($m_str,$sd_str,\@Che_dataSet);
 		
-		#########·Ö±æÂÊ£º±£Áô10%µÄ1kbÒÔÏÂµÄÃ¸ÇÐÎ»µã£¬80%µÄ1kb-1.5kbµÄÎ»µã£¬ÆäËû1500bpÒÔÏÂµÄÎ»µãÎ»ÖÃÈ¡¾ùÖµ£¨Ïà¼Ó/2£©
+			#add resolution model
 			my @RE;
 			if ($res==1) 
-					{
-						@RE=RES::RES1($under1000,$under1500,\@pos_str);
-					}
-				else
-					{
-						@RE=RES::RES2($ResMean,$ResSdt,\@pos_str);
-					}
+			{
+				@RE=RES::RES1($under1000,$under1500,\@pos_str);
+			}
+			else
+			{
+				@RE=RES::RES2($ResMean,$ResSdt,\@pos_str);
+			}
 
 			@BNXprint=&PRINT($Mol_ID,$QX11av,$QX11sd,$QX12av,$QX12sd,\@RE);
 			$Mol_ID=$BNXprint[1];
 			print BNX "$BNXprint[0]\n";
 		}
-		#print "isd_len=$isd_len\n";
-		#print "Che_pos_len=$Che_pos_len\n";
-		#print Chi "$Chimera::Chi_return\n";
-
-#close OUT1;
-#close OUT2;
 close BNX;
-#close CMAP;
-#close FN;
-#close FP;
-#close STRETCH;
-#close Chi;
 
 my $end_time = time();
 my $elapsed_time = $end_time - $start_time;    
 print "elapsed_time=$elapsed_time\n";
 
 
-
 sub PRINT
 {
-		my ($subMol_ID,$subQX11av,$subQX11sd,$subQX12av,$subQX12sd,$PosNew) = @_; 
+	my ($subMol_ID,$subQX11av,$subQX11sd,$subQX12av,$subQX12sd,$PosNew) = @_; 
 
-		#ÊäÈëµ½bnxÎÄ¼þÖÐ
-		my $PosNew_len=@$PosNew;
-		my ($Numsite_new,$MolSNR_total,$MolSNR,$MolIntensity_total,$MolIntensity);
-		my @QX11=();
-		my @QX12=();
-		my @PosNew_new=();
-		if ($PosNew_len<=1) 
-			{
-				$Numsite_new=0;#Ö»Ê£ÏÂÒ»¸öÃ¸ÇÐÎ»µã£¬¼´·Ö×Ó³¤¶ÈÎ»µã,Êµ¼ÊÃ»ÓÐÇÐµã
-				$MolSNR=5.0;
-				$MolIntensity=1.0;#·Ö×ÓÆ½¾ùIntensity
-			}
-		else 
-			{
-				$Numsite_new=$PosNew_len-1;#²»Ö»Ò»¸öÃ¸ÇÐÎ»µã£¬×ÜÎ»µãÊýÒª¼õÈ¥×îºóÒ»¸ö·Ö×Ó³¤¶ÈÎ»µã
-				#ÒÔ×ÜÌåscanµÄ·Ö²¼²ÎÊýÎªÆ½¾ùÖµºÍ·½²î£¬Ã¿´ÎÖ»²úÉúÒ»¸öSNR£¬
-				@QX11=random_normal($Numsite_new, $QX11av, $QX11sd);#²úÉúSNRËæ»úÊý,  
-				$MolSNR_total=sum @QX11;
-				$MolSNR=$MolSNR_total/$Numsite_new;#·Ö×ÓÆ½¾ùSNR
-				@QX12=random_normal($Numsite_new, $subQX12av, $subQX12sd);#²úÉúintensityËæ»úÊý
-				$MolIntensity_total=sum @QX12;
-				$MolIntensity=$MolIntensity_total/$Numsite_new;#·Ö×ÓÆ½¾ùIntensity				
-			}
+	#print to BNX file
+	my $PosNew_len=@$PosNew;
+	my ($Numsite_new,$MolSNR_total,$MolSNR,$MolIntensity_total,$MolIntensity);
+	my @QX11=();
+	my @QX12=();
+	my @PosNew_new=();
+	if ($PosNew_len<=1) 
+	{
+		$Numsite_new=0;#with only one nick site, which is not the true nick but the molecule length
+		$MolSNR=5.0;#the average snr of molecule
+		$MolIntensity=1.0;#the average intensity of molecule
+	}
+	else 
+	{
+		$Numsite_new=$PosNew_len-1;
+		@QX11=random_normal($Numsite_new, $QX11av, $QX11sd);
+		$MolSNR_total=sum @QX11;
+		$MolSNR=$MolSNR_total/$Numsite_new;
+		@QX12=random_normal($Numsite_new, $subQX12av, $subQX12sd);
+		$MolIntensity_total=sum @QX12;
+		$MolIntensity=$MolIntensity_total/$Numsite_new;			
+	}
 
-			$subMol_ID++;
-
-			my $MoleculeLen=0; 
-			if ($PosNew_len==0) 
-				{
-					$MoleculeLen=1;
-				}
-			else 
-				{
-					$MoleculeLen=sprintf "%.1f",$$PosNew[-1];
-				}
-			my $MolSNR_print=sprintf "%.6f",$MolSNR;
-			my $MolIntensity_print=sprintf "%.3f",$MolIntensity;
-			my @PosNew_print=();
-			foreach my $Pos_New(@$PosNew) 
-			{
-				my $PosNew_print = sprintf "%.1f",$Pos_New;
-				push (@PosNew_print,$PosNew_print);
-			}
-			my @QX11_print=();
-			foreach my $QX11 (@QX11) 
-			{
-				my $QX11_print = sprintf "%.4f",$QX11;
-				push (@QX11_print,$QX11_print);
-			}
-			my @QX12_print=();
-			foreach my $QX12 (@QX12) 
-			{
-				my $QX12_print = sprintf "%.4f",$QX12;
-				push (@QX12_print,$QX12_print);
-			}
-
-			@QX11_print=join("\t",@QX11_print);
-			@QX12_print=join("\t",@QX12_print);
-			@PosNew_print=join("\t",@PosNew_print);
+	$subMol_ID++;
+	my $MoleculeLen=0; 
+	if ($PosNew_len==0) 
+	{
+		$MoleculeLen=1;
+	}
+	else 
+	{
+		$MoleculeLen=sprintf "%.1f",$$PosNew[-1];
+	}
+	my $MolSNR_print=sprintf "%.6f",$MolSNR;
+	my $MolIntensity_print=sprintf "%.3f",$MolIntensity;
+	my @PosNew_print=();
+	foreach my $Pos_New(@$PosNew) 
+	{
+		my $PosNew_print = sprintf "%.1f",$Pos_New;
+		push (@PosNew_print,$PosNew_print);
+	}
+	my @QX11_print=();
+	foreach my $QX11 (@QX11) 
+	{
+		my $QX11_print = sprintf "%.4f",$QX11;
+		push (@QX11_print,$QX11_print);
+	}
+	my @QX12_print=();
+	foreach my $QX12 (@QX12) 
+	{
+		my $QX12_print = sprintf "%.4f",$QX12;
+		push (@QX12_print,$QX12_print);
+	}
+	@QX11_print=join("\t",@QX11_print);
+	@QX12_print=join("\t",@QX12_print);
+	@PosNew_print=join("\t",@PosNew_print);
 			
-			my $str="20249,11694,10\/2\/2013,0011926";
-			my $return01=join ("\t","0",$subMol_ID,$MoleculeLen,$MolSNR_print,$MolIntensity_print,$Numsite_new,$subMol_ID,"3","-1",$str,"1");
-			my $return02=join ("\t","1",@PosNew_print);
-			my $return03=join ("\t","QX11",@QX11_print);
-			my $return04=join ("\t","QX12",@QX12_print);
-			my $return=join ("\n",$return01,$return02,$return03,$return04);
-
-			return ($return,$subMol_ID);
+	my $str="20249,11694,10\/2\/2013,0011926";
+	my $return01=join ("\t","0",$subMol_ID,$MoleculeLen,$MolSNR_print,$MolIntensity_print,$Numsite_new,$subMol_ID,"3","-1",$str,"1");
+	my $return02=join ("\t","1",@PosNew_print);
+	my $return03=join ("\t","QX11",@QX11_print);
+	my $return04=join ("\t","QX12",@QX12_print);
+	my $return=join ("\n",$return01,$return02,$return03,$return04);
+	return ($return,$subMol_ID);
 }
 
 
@@ -860,3 +723,4 @@ Add this flag to the command if a project is de novo (i.e. has no reference). An
 =head1 DESCRIPTION
 
 =cut
+
