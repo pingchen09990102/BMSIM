@@ -1,5 +1,5 @@
-# BMSIM
-BioNano molecule simulator
+# BNSIM
+BioNano molecule map data simulator
 ================
 
 scripts to simulate BioNano molecule data
@@ -27,14 +27,14 @@ Workflow diagram
  
  DEPENDENCIES
 
- BMSIM requires Perl >= 5.10.0
-    Perl module Math::Random. This can be installed using CPAN ;
-    Perl module Math::Random::MT. This can be installed using CPAN http://search.cpan.org/~fangly/Math-Random-MT-1.17/MT.pm;
+ BNSIM requires Perl >= 5.10.0
+ Perl module Math::Random. This can be installed using CPAN ;
+ Perl module Math::Random::MT. This can be installed using CPAN http://search.cpan.org/~fangly/Math-Random-MT-1.17/MT.pm;
 
     
 USAGE
     
-perl BMSIM.pl [options]
+perl BNSIM.pl [options]
 
 Documentation options:
  	-help	brief help message
@@ -78,6 +78,6 @@ Optional options:
 	
 
     #example：                                
-    perl BMSIM.pl -cov 10 -p PLsimCov350 -ca MG1655.fa -bnx PLsimCov350.bnx -fragile MG1655.txt -e GCTCTTC,GAAGAGC -np1 7 >log.txt
+    perl BNSIM.pl -cov 10 -p PLsimCov350 -ca MG1655.fa -bnx PLsimCov350.bnx -fragile MG1655.txt -e GCTCTTC,GAAGAGC -np1 7 >log.txt
 
 
