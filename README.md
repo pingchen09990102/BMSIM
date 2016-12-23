@@ -27,8 +27,8 @@ Workflow diagram
  
  DEPENDENCIES
 
- BNSIM requires Perl >= 5.10.0
- Perl module Math::Random. This can be installed using CPAN ;
+ BNSIM requires Perl >= 5.10.0;
+ Perl module Math::Random. This can be installed using CPAN http://search.cpan.org/~grommel/Math-Random-0.70/Random.pm;
  Perl module Math::Random::MT. This can be installed using CPAN http://search.cpan.org/~fangly/Math-Random-MT-1.17/MT.pm;
 
     
