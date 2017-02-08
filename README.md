@@ -1,5 +1,5 @@
-# BNSIM
-BioNano molecule map data simulator
+# BMSIM
+BioNano molecule data simulator
 ================
 
 scripts to simulate BioNano molecule data
@@ -34,7 +34,7 @@ Workflow diagram
     
 USAGE
     
-perl BNSIM.pl [options]
+perl BMSIM.pl [options]
 
 Documentation options:
  	-help	brief help message
