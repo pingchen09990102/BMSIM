@@ -5,15 +5,10 @@ BMSIM is a simulation tool for BioNano molecule data of the BioNano optical mapp
 
 ---------------
 
+
 SUMMARY
 ---------------
-BioNano Molecule SIMulator (BMSIM) explicitly incorporated BioNano data models (BioNano molecule length distribution, FN and FP signals, DNA molecules stretching variations, variation in optical resolution, and fragile sites) and the methods to generate chimeric molecules and assign SNR scores for simulated BioNano molecules. We simulated noisy maps from ‘perturbed’ versions of the reference map. Using genomic sequences (.fasta file) as input, BMSIM simulated noisy maps with five main steps:
-I) generate BioNano molecules with random fragmentation and fragile site bias model;
-II) abel nicking sites for BioNano molecules by in silico restriction digestion.Our program supported all available nicking enzymes currently used in BioNano systerm (i.e., Nt.BspQI, Nb.BbvCI, Nb.Bsml and Nb.BsrDI), as well as any artificial nicking sequences that users chose to define;
-III) incorporate data models for FN sites, FP sites, stretching variations, optical resolution, and chimerism for BioNano molecules;
-IV) assign SNR and intensity scores for labelling sites;
-V) iterate for targeted coverage depth.
-The output of BMSIM is a BNX format text file (.BNX, see example BNX file) which contains molecule map length, label positions, and label signal score, ect.
+BioNano Molecule SIMulator (BMSIM) explicitly incorporated BioNano data models (BioNano molecule length distribution, FN and FP signals, DNA molecules stretching variations, variation in optical resolution, and fragile sites) and the methods to generate chimeric molecules and assign SNR scores for simulated BioNano molecules. We simulated noisy maps from ‘perturbed’ versions of the reference map. Using genomic sequences (.fasta file) as input, BMSIM simulated noisy maps with five main steps: I) generate BioNano molecules with random fragmentation and fragile site bias model; II) abel nicking sites for BioNano molecules by in silico restriction digestion.Our program supported all available nicking enzymes currently used in BioNano systerm (i.e., Nt.BspQI, Nb.BbvCI, Nb.Bsml and Nb.BsrDI), as well as any artificial nicking sequences that users chose to define; III) incorporate data models for FN sites, FP sites, stretching variations, optical resolution, and chimerism for BioNano molecules; IV) assign SNR and intensity scores for labelling sites; V) iterate for targeted coverage depth. The output of BMSIM is a BNX format text file (.BNX, see example BNX file) which contains molecule map length, label positions, and label signal score, ect.
 
  
 DEPENDENCIES
@@ -32,8 +27,7 @@ USAGE
 perl BMSIM.pl [options]
 
 #example：                                
-
-perl BNSIM.pl -cov 10 -p PLsimCov350 -ca MG1655.fa -bnx PLsimCov350.bnx -fragile MG1655.txt -e GCTCTTC,GAAGAGC -np1 7 >log.txt
+ perl BNSIM.pl -cov 10 -p PLsimCov350 -ca MG1655.fa -bnx PLsimCov350.bnx -fragile MG1655.txt -e GCTCTTC,GAAGAGC -np1 7 >log.txt
 
 Documentation options:
  	-help	brief help message
