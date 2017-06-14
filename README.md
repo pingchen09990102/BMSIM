@@ -19,14 +19,20 @@ The output of BMSIM is a BNX format text file (.BNX, see example BNX file) which
 DEPENDENCIES
 ---------------
 BNSIM requires Perl >= 5.10.0;
-Perl module Math::Random. This can be installed using CPAN http://search.cpan.org/~grommel/Math-Random-0.70/Random.pm;
-Perl module Math::Random::MT. This can be installed using CPAN http://search.cpan.org/~fangly/Math-Random-MT-1.17/MT.pm;
+
+Perl module Math::Random. 
+This can be installed using CPAN http://search.cpan.org/~grommel/Math-Random-0.70/Random.pm;
+
+Perl module Math::Random::MT. 
+This can be installed using CPAN http://search.cpan.org/~fangly/Math-Random-MT-1.17/MT.pm;
 
     
 USAGE
 ---------------    
 perl BMSIM.pl [options]
+
 #example：                                
+
 perl BNSIM.pl -cov 10 -p PLsimCov350 -ca MG1655.fa -bnx PLsimCov350.bnx -fragile MG1655.txt -e GCTCTTC,GAAGAGC -np1 7 >log.txt
 
 Documentation options:
