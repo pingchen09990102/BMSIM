@@ -13,7 +13,7 @@ BioNano Molecule SIMulator (BMSIM) explicitly incorporated BioNano data models (
  
 DEPENDENCIES
 ---------------
-BNSIM requires Perl >= 5.10.0;
+BMSIM requires Perl >= 5.10.0;
 
 Perl module Math::Random. 
 This can be installed using CPAN http://search.cpan.org/~grommel/Math-Random-0.70/Random.pm;
@@ -27,7 +27,7 @@ USAGE
 perl BMSIM.pl [options]
 
 #example：                                
- perl BNSIM.pl -cov 10 -p PLsimCov350 -ca MG1655.fa -bnx PLsimCov350.bnx -fragile MG1655.txt -e GCTCTTC,GAAGAGC -np1 7 >log.txt
+ perl BMSIM.pl -cov 10 -p PLsimCov350 -ca MG1655.fa -bnx PLsimCov350.bnx -fragile MG1655.txt -e GCTCTTC,GAAGAGC -np1 7 >log.txt
 
 Documentation options:
  	-help	brief help message
