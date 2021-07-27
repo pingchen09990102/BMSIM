@@ -1,5 +1,5 @@
-#!/usr/bin/perl
-package FN;
+#!/usr/bin/env perl
+package ErrorFN;
 
 use strict;
 use warnings;
