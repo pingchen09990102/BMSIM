@@ -16,8 +16,6 @@ use Digest;
 use RES;
 use Fragile;
 
-
-
 my $start_time=time();
 
 my ($out1,$out2,$Cov,$chr_fa,$bnx,$FragileIN,$str,$RtI,$RtII,$snr,$Ints,$out3,$out4,$out5,$out6,$out7,$e,$np1,$np2,$FragileArg);
@@ -333,7 +331,7 @@ for (my $r=0;$r<$Cov;$r++) #cycle according to coverage
 	
 	while ($geno_len!=0) 
 	{
-		my $read_length01_random=random_exponential(1,$EXPav);#Produce a molecular length accordint to the exponential distribution
+		my $read_length01_random=random_exponential(1,$EXPav);#Produce a molecular length according to the exponential distribution
 		my $read_length01=int($read_length01_random*1000);#kb transfer to bp
 		$str=substr ($genome, 0, $read_length01);
 
@@ -665,27 +663,21 @@ Required options:
 Optional options:
 
 -lm,--length_mean int	mean length (kb) of BioNano molecule, produce BioNano molecular length according to the exponential distribution (Default:70)
-
 -FNp,--FN_probability float	parameter for the false negative site model, i.e. Binomil distibution, FNp is the probability of getting a sucess in one trial (Default:0.85)
-
 -FPi,--FP_intensity float	the initial interval of false positive site (kb) (Default:100)
-
 -str,--stretch_normal string	parameters (ave,std) for the stretch model,i.e. Normal distribution, Stretch~N(ave,std), ave is mean, std is standard deviation, comma-separated lists of values (Default:0.98,0.08)
 
 -Rt,--Res_type int	resolution type, "1" for "Res_typeI", "2" for "Res_typeII" (Default:2)
-
 -RtI,--Res_typeI string	resolution model type I:p1,p2, p1 is the proportion of sites within 1kb distance that are retained, p2 is the proportion of sites within 1.5kb distance that are retained, comma-separated lists of the values p1 and p2 (Default:0,0.9)
 -RtII,--Res_typeII string	parameters (ave,std) for the resolution model type II,i.e. Normal distribution, Res_typeII~N(ave,std), ave is mean, std is standard deviation, comma-separated lists of values (Default:1.2,0.9)
 
 -snr,--SNR string	parameters (ave,std) for signal noise ratio (SNR) model of BioNano molecule,i.e. Normal distribution, SNR~N(ave,std), ave is mean, std is standard deviation, comma-separated lists of values (Default:3,0.66)
 -Ints,--Intensity string	parameters (ave,std) for Intensity model of BioNano molecule, i.e. Normal distribution, Intensity~N(ave,std), ave is mean, std is standard deviation, comma-separated lists of values (Default:1,0.2)
 
-
 -Chi_prop,--Chimeric_proportion	float	proportion of the total chimeric molecule in raw BioNano molecule (Default:0.1)
 -Chi_Bi,--Bimera_proportion float	proportion of Bimera (Default:0.85)
 -Chi_Tr,--Trimera_proportion	float	proportion of Trimera (Default:0.13)
 -Chi_Qua,--Quadramera_proportion float	proportion of Quadramera (Default:0.02)
-
 
 -e,--enzymes_pattern string	nicking pattern of the enzyme, e.g. GCTCTTC,GAAGAGC for NtBspQI; GCAATG,CATTGC for Nb.BsrDI; GCTCTTC,GAAGAGC,GCAATG,CATTGC for dual nicking with NtBspQI and Nb.BsrDI (Default:GCTCTTC,GAAGAGC)
 -np1,--nick_position1 int	nicking position of the enzyme pattern from 5' to 3' for enzyme 1,
