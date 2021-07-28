@@ -33,6 +33,7 @@ Documentation options:
  	-help	brief help message
 
 Required options:
+	
 	-cov	Coverage
 	-ca	reference genome fasta
 	-bnx	bnx output
