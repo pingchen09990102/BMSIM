@@ -622,5 +622,69 @@ sub PRINT
 	return ($return,$subMol_ID);
 }
 
+################################################################################
+##############                  Documentation                 ##################
+################################################################################
+## style adapted from http://www.perlmonks.org/?node_id=489861 
+__END__
+
+=head1 NAME
+
+
+=head1 USAGE
+
+perl BMSIM.pl [options]
+
+#example：
+
+perl BMSIM.pl -cov 10 -p EcoliSim -ca MG1655.fa -bnx EcoliSim.bnx -fragile MG1655.txt -e GCTCTTC,GAAGAGC -np1 7 >log.txt
+
+
+=head1 OPTIONS
+
+Documentation options: 
+
+-help brief help message
+
+Required options:
+
+-cov	Coverage
+-ca	reference genome fasta
+-bnx	bnx output
+-fragile	fragile site file
+
+
+Optional options:
+
+-lm	length_mean,#possion
+
+-FNp	FN_probality,Binomil
+-FPi	FP_intensity,possion~lamda
+
+-str	stretch_normal,stretch~N(ave,std),comma-separated lists of values
+
+-Rt	Resolution type
+-RtI	Res_typeI, under1000,under1500
+-RtII	Res_typeII, resolution~N(ave,std)
+
+-snr	SNR, SNR~N(ave,std)
+-Ints	Intensity, Intensity~N(ave,std)
+
+-Chi_pert	Chi_percent
+-Chi_Bi		Chi_Bi
+-Chi_Tr		Chi_Tri
+-Chi_Qua	Chi_Qua
+
+-e	enzyme nicking pattern
+-np1	nick_position1, nicking position of the enzyme pattern in 5' to 3',
+         e.g. NtBspQI: 5' ...GCTCTTCN^... 3' the np1 is 7;    Nb.BsrDI: 5' ...GCAATGNN... 3'  the np1 is -1.
+                       3' ...CAGAGNN... 5'                              3' ...CGTTAC^NN... 5'
+		 
+-np2	nick_position2
+-f	FragileTypeI
+-p	project name for all assemblies
+
+
+=cut
 
 
