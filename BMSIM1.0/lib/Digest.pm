@@ -87,7 +87,7 @@ sub Dual
 	my $position_2_01=0;
 	my $position_2_02=0;
 	my $e2PL=length($plus_strand2);
-	print "$e2PL=$e2PL\n";
+	print "e2PL=$e2PL\n";
 	while ($i_2<$str_length) 
 	{
 		$position_2_01=index($str2,$plus_strand2,$i_2)+1;
