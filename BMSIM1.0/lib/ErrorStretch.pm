@@ -1,5 +1,5 @@
-#!/usr/bin/perl
-package Stretch;
+#!/usr/bin/env perl
+package ErrorStretch;
 
 use strict;
 use warnings;
