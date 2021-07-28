@@ -43,15 +43,15 @@ my $Chi_Qua=0.02;
 my $ProName="out";
 
 GetOptions (
-			  'help|h' => \$help,
-              'version' => \$version,
+			  'h|help' => \$help,
+              'v|version' => \$version,
 			  'man' => \$man,
               'cov|Coverage:i' => \$Cov,
               'ca|chr_fa:s' => \$chr_fa,#fa input
               'bnx|bnx_outfile:s' => \$bnx,#bnx output
 			  'fragile|Fragile_infile:s' => \$FragileIN,#Fragile Input
 			  'lm|length_mean:f' => \$EXPav,#possion
-              'FNp|FN_probality:f' => \$p_FN,#add FN, enzyme nick effiency
+              'FNp|FN_probability:f' => \$p_FN,#add FN, enzyme nick effiency
               'FPi|FP_intensity:f' => \$lamdaFP,#add FP, possion
               'str|stretch_normal:s' => \$str,#stretch~N(ave,std),comma-separated lists of values
 
@@ -62,16 +62,16 @@ GetOptions (
 			  'snr|SNR:s' => \$snr,#type II, SNR~N(ave,std)
 			  'Ints|Intensity:s' => \$Ints,#type II, Intensity~N(ave,std)
 
-			  'Chi_perc|Chi_percent:f' => \$Chi_perc,
-              'Chi_Bi|Chi_Bi:f' => \$Chi_Bi,
-              'Chi_Tri|Chi_Tri:f' => \$Chi_Tri,
-			  'Chi_Qua|Chi_Qua:f' => \$Chi_Qua,
+			  'Chi_perc|Chimeric_proportion:f' => \$Chi_perc,
+              'Chi_Bi|Bimera_proportion:f' => \$Chi_Bi,
+              'Chi_Tri|Trimera_proportion:f' => \$Chi_Tri,
+			  'Chi_Qua|Quadramera_proportion:f' => \$Chi_Qua,
 
 			  'e|enzymes_pattern:s' => \$e,#enzyme recognized pattern split with comma
-			  'np1|nick_position1:i' => \$np1,#5' to 3', nicking position of the enzyme pattern
-			  'np2|nick_position2:i' => \$np2,#nicking position of the enzyme pattern
+			  'np1|nick_position1:i' => \$np1,#5' to 3', nicking position of the enzyme pattern for enzyme 1
+			  'np2|nick_position2:i' => \$np2,#5' to 3', nicking position of the enzyme pattern for enzyme 2
 
-              'p|proj:s' => \$ProName,
+              'p|proj:s' => \$ProName,#project name for the simulation
 
               'f|FragileArg:s' => \$FragileArg
 
@@ -168,6 +168,7 @@ if ($e)#single
 		{
 			$plus1=$e_arguments[0];
 			$minus1=$e_arguments[1];
+			print "$plus1\t$minus1\t$np1\n";
 		}
 	else #dual
 		{
@@ -177,6 +178,8 @@ if ($e)#single
 			$minus1=$e_arguments[1];
 			$plus2=$e_arguments[2];
 			$minus2=$e_arguments[3];
+			print "$plus1\t$minus1\t$np1\n";
+			print "$plus2\t$minus2\t$np2\n";
 		}
 }
 else #default single
@@ -185,8 +188,9 @@ else #default single
 	$minus1=$e_arguments[1];
 	$np1=7;
 	$enzyme_len=2;
+	print "$plus1\t$minus1\t$np1\n";
 }
-print "$plus1\t$minus1\t$np1\n";
+
 
 #default FragileArg a and b
 my @f_arguments=(0.7758,-0.006984);
