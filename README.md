@@ -75,7 +75,7 @@ Optional options:
 			 
 	-np2	nick_position2
 	-f	FragileTypeI
-	-p	project name for all assemblies
+	-p	project name for the simulation
 	
 
 
