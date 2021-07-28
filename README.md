@@ -27,7 +27,7 @@ USAGE
 perl BMSIM.pl [options]
 
 #example：                                
- perl BMSIM.pl -cov 10 -p PLsimCov350 -ca MG1655.fa -bnx PLsimCov350.bnx -fragile MG1655.txt -e GCTCTTC,GAAGAGC -np1 7 >log.txt
+ perl BMSIM.pl -cov 10 -p PLsim -ca MG1655.fa -bnx PLsim.bnx -fragile MG1655.txt -e GCTCTTC,GAAGAGC -np1 7 >log.txt
 
 Documentation options:
  	-help	brief help message
