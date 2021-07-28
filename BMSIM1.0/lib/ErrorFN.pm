@@ -1,5 +1,5 @@
-#!/usr/bin/perl
-package FN;
+#!/usr/bin/env perl
+package ErrorFN;
 
 use strict;
 use warnings;
@@ -7,7 +7,7 @@ use List::Util qw/sum/;
 use Math::Random qw(:all);
 
 ########Add FNs and FPs first, then add stretch bias########
-########Add FNS, Binomial(p), rbinom(n,1,0.8), n is total labels, delate labels with value 0######## 	
+########Add FNs, Binomial(p), rbinom(n,1,0.8), n is total labels, delate labels with value 0######## 	
 sub FN
 {
 	my ($p_FNsub,$mol_pre_FN) = @_; 
