@@ -33,39 +33,33 @@ my $Chi_Qua=0.02;
 my $ProName="out";
 
 GetOptions (
-			  'h|help' => \$help,
-              'v|version' => \$version,
-			  'man' => \$man,
-              'cov|Coverage:i' => \$Cov,
-              'ca|chr_fa:s' => \$chr_fa,#fa input
-              'bnx|bnx_outfile:s' => \$bnx,#bnx output
-			  'fragile|Fragile_infile:s' => \$FragileIN,#Fragile Input
-			  'lm|length_mean:f' => \$EXPav,#possion
-              'FNp|FN_probability:f' => \$p_FN,#add FN, enzyme nick effiency
-              'FPi|FP_intensity:f' => \$lamdaFP,#add FP, possion
-              'str|stretch_normal:s' => \$str,#stretch~N(ave,std),comma-separated lists of values
-
-			  'Rt|Res_type:i' => \$res,
-              'RtI|Res_typeI:s' => \$RtI,#type I, under1000,under1500
-			  'RtII|Res_typeII:s' => \$RtII,#type II, resolution~N(ave,std)
-
-			  'snr|SNR:s' => \$snr,#type II, SNR~N(ave,std)
-			  'Ints|Intensity:s' => \$Ints,#type II, Intensity~N(ave,std)
-
-			  'Chi_perc|Chimeric_proportion:f' => \$Chi_perc,
-              'Chi_Bi|Bimera_proportion:f' => \$Chi_Bi,
-              'Chi_Tri|Trimera_proportion:f' => \$Chi_Tri,
-			  'Chi_Qua|Quadramera_proportion:f' => \$Chi_Qua,
-
-			  'e|enzymes_pattern:s' => \$e,#enzyme recognized pattern split with comma
-			  'np1|nick_position1:i' => \$np1,#5' to 3', nicking position of the enzyme pattern for enzyme 1
-			  'np2|nick_position2:i' => \$np2,#5' to 3', nicking position of the enzyme pattern for enzyme 2
-
-              'p|proj:s' => \$ProName,#project name for the simulation
-
-              'f|FragileArg:s' => \$FragileArg
-
+		'h|help' => \$help,
+		'v|version' => \$version,
+		'man' => \$man,
+		'cov|Coverage:i' => \$Cov,
+		'ca|chr_fa:s' => \$chr_fa,#fa input
+		'bnx|bnx_outfile:s' => \$bnx,#bnx output
+		'fragile|Fragile_infile:s' => \$FragileIN,#Fragile Input
+		'lm|length_mean:f' => \$EXPav,#possion
+		'FNp|FN_probability:f' => \$p_FN,#add FN, enzyme nick effiency
+		'FPi|FP_intensity:f' => \$lamdaFP,#add FP, possion
+		'str|stretch_normal:s' => \$str,#stretch~N(ave,std),comma-separated lists of values
+		'Rt|Res_type:i' => \$res,
+		'RtI|Res_typeI:s' => \$RtI,#type I, under1000,under1500
+		'RtII|Res_typeII:s' => \$RtII,#type II, resolution~N(ave,std)
+		'snr|SNR:s' => \$snr,#type II, SNR~N(ave,std)
+		'Ints|Intensity:s' => \$Ints,#type II, Intensity~N(ave,std)
+		'Chi_perc|Chimeric_proportion:f' => \$Chi_perc,
+		'Chi_Bi|Bimera_proportion:f' => \$Chi_Bi,
+		'Chi_Tri|Trimera_proportion:f' => \$Chi_Tri,
+		'Chi_Qua|Quadramera_proportion:f' => \$Chi_Qua,
+		'e|enzymes_pattern:s' => \$e,#enzyme recognized pattern split with comma
+		'np1|nick_position1:i' => \$np1,#5' to 3', nicking position of the enzyme pattern for enzyme 1
+		'np2|nick_position2:i' => \$np2,#5' to 3', nicking position of the enzyme pattern for enzyme 2
+		'p|proj:s' => \$ProName,#project name for the simulation
+		'f|FragileArg:s' => \$FragileArg
               )  
+	      
 or pod2usage(2);
 pod2usage(1) if $help;
 pod2usage(-exitstatus => 0, -verbose => 2) if $man;
