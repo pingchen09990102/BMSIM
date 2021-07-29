@@ -635,7 +635,7 @@ __END__
  Example 2: Use dual nicking enzymes: NtBspQI and Nb.BsrDI
             NtBspQI: 5' ...GCTCTTCN^... 3' the nick position is 7;    Nb.BsrDI: 5' ...GCAATGNN... 3'  the nick position is -1
                      3' ...CGAGAAGN... 5'                                       3' ...CGTTAC^NN... 5'
- perl BMSIM.pl -cov 10 -ca ./example/MG1655.fa -Fi ./example/MG1655.txt -e GCTCTTC,GAAGAGC,GCAATG,CATTGC  -np1 7 -np2 -1 -p EcoliSim2 -bnx out2.bnx
+ perl BMSIM.pl -cov 10 -ca ./example/MG1655.fa -Fi ./example/MG1655.txt -e GCTCTTC,GAAGAGC,GCAATG,CATTGC -np1 7 -np2 -1 -p EcoliSim2 -bnx out2.bnx
  
  
  Example 3: Change parameters (mean and standard deviation) for the stretch model:
