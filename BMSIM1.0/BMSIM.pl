@@ -620,7 +620,7 @@ __END__
 	
 	BMSIM is a simulation tool for BioNano molecule data of the BioNano optical mapping platform
 	
-	Version: 1.0
+	Version: 1.0.0
 	
 =head1 USAGE
 	
