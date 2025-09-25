@@ -92,6 +92,9 @@ Optional options:
 	-p,--proj string                       project name for the simulation, e.g. EcoliSim
 	
 
+CITATION
+--------------- 
+If you use BMSIM in your research, please cite the following publication:
 
-
+Chen, P., Jing, X., Ren, J., Cao, H., Hao, P., & Li, X. (2018). Modelling BioNano optical data and simulation study of genome map assembly. Bioinformatics, 34(23), 3966–3974. https://doi.org/10.1093/bioinformatics/bty456.
 
